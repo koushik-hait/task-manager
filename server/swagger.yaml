@@ -1,0 +1,309 @@
+openapi: "3.0.0"
+info:
+  title: Task manager API
+  description: Task manager API created by DencodeService for all the startup available there.
+  version: 1.1.0
+  contact:
+    email: koushikhait49@gmail.com
+    url: "https://koushikhait.onrender.com"
+
+# servers:
+#   - url: "https://localhost:4000/api/v1"
+#     description: for local host - secure
+#   - url: "http://localhost:4000/api/v1"
+#     description: for local host - regular
+
+servers:
+  - url: "{protocol}://{url}/api/{version}"
+    description: for local host 
+    variables:
+      version:
+        enum:
+          - v1
+          - v2
+        default: v1
+      url:
+        enum:
+          - localhost:4000
+        default: localhost:4000
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+
+paths:
+
+  /signup:
+    post:
+      tags:
+        - User
+      summary: signup a new user. required files are - name, email, password
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  required: true
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: All good success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+                      _id:
+                        type: string
+                      createdAt:
+                        type: string
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /login:
+    post:
+      tags:
+        - User
+      summary: login a new user. required files are -  email and password. Also adds httpOnly cookie in browser. It sends token in response too.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: All good success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+                      _id:
+                        type: string
+                      createdAt:
+                        type: string
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /logout:
+    get:
+      tags:
+        - User
+      summary: get request to logout the user. Also removes httpOnly cookies 
+      responses:
+        200:
+          description: All good success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /task/add:
+    post:
+      tags:
+        - Task
+      summary: add a new task. required fields are - title, description, status
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - status
+              properties:
+                title:
+                  type: string
+                  required: true
+                description:
+                  type: string
+                status:
+                  type: string
+      responses:
+        200:
+          description: All good success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  task:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      status:
+                        type: string
+                      _id:
+                        type: string
+                      createdAt:
+                        type: string
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+
+  /task/list:
+    post:
+      tags:
+        - Task
+      summary: list all task. required fields are - 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - status
+              properties:
+                title:
+                  type: string
+                  required: true
+                description:
+                  type: string
+                status:
+                  type: string
+      responses:
+        200:
+          description: All good success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    success:
+                      type: boolean
+                    task:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        status:
+                          type: string
+                        _id:
+                          type: string
+                        createdAt:
+                          type: string
+        400:
+          description: Bad request
+        500:
+          description: internal server error
+  
+  /task/delete/{id}:
+    post:
+      tags:
+        - Task
+      summary: Allows user to delete task-
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+            type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: string
+                  required: false
+              
+      responses:
+        200:
+          description: All good success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        400:
+          description: Bad request
+        500:
+          description: internal server error
